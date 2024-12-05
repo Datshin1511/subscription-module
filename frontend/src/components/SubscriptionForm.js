@@ -56,7 +56,7 @@ function SubscriptionForm() {
     const annualPrice = products.find(product => product.ProductName === productName).AnnualSubscriptionCost;
     const subscription = subscriptions.find(sub => ((sub.ProductName === productName) && (sub.CustomerID === customerId)));
 
-    if(!subscription || !annualPrice) return 0;
+    if(!subscription || !annualPrice) return 0.0;
 
     const startDate = new Date(subscription.SubscriptionStartDate);
     const endDate = (new Date(subscription.SubscriptionEndDate) <= new Date()) ? (new Date(subscription.SubscriptionEndDate)) : (new Date())
@@ -165,7 +165,7 @@ function SubscriptionForm() {
   const newSubscription = (e) => {
     e.preventDefault()
     console.log("Form data: ", formData)
-    if((new Date(formData.endDate) > new Date(formData.startDate)) && (new Date() <= new Date(formData.startDate))){
+    if((new Date(formData.endDate) > new Date(formData.startDate)) && (new Date() <= new Date(formData.startDate)) && (formData.users > 0)){
       newUserMutation.mutate(formData)
     }
     else{
@@ -173,6 +173,9 @@ function SubscriptionForm() {
         alert("Start date cannot be in the past!")
       if(new Date(formData.startDate) >= new Date(formData.endDate)){
         alert("End date should be strictly greater than start date!")
+      }
+      if(formData.users < 1){
+        alert("Minimum user count for subscription is 1")
       }
     }
   }
@@ -270,11 +273,12 @@ function SubscriptionForm() {
               value={formData.users}
               className="form-control"
               placeholder="Number of Users"
+              min="1" step="1"
               required
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-100">Check for Subscriptions</button>
+          <button type="submit" className="btn btn-primary w-100">Check / Register</button>
         </form>
       </div>
 
