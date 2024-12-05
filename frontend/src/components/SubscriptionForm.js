@@ -13,6 +13,7 @@ function SubscriptionForm() {
     users: 0
   });
 
+  const [prevEndDate, setPrevEndDate] = useState('');
   const { data: customers } = useQuery('customer', fetchCustomers);
   const { data: products } = useQuery('product', fetchProducts);
 
@@ -23,11 +24,18 @@ function SubscriptionForm() {
   const toggleEditMode = () => {    
     if(isEditable){
       if(new Date(formData.endDate) >= new Date() && new Date(formData.endDate) >= new Date(formData.startDate)) {
+        console.error("(toggleEditMode): End date: ", formData.endDate)
         updateUserMutation.mutate(formData)
       }
       else{
         alert("Subscription ending date should always fall after today's date.")
+        // Revert back to old date in the records and prevent toggling edit mode.
+        setFormData((prev) => ({...prev, endDate: prevEndDate}))
+        return;
       }
+    }
+    else {
+      setPrevEndDate(formData.endDate)
     }
     setIsEditable((prev) => !prev)
   }
@@ -44,7 +52,7 @@ function SubscriptionForm() {
         formData.endDate = data[0].SubscriptionEndDate
         formData.users = data[0].NumberOfUsers
 
-        alert("An entry of the same information exists already!")
+        alert("The customer is already subscribed to this service/product!")
       } 
       else{
         alert("No entries found for the selected combination.")
@@ -87,9 +95,19 @@ function SubscriptionForm() {
     }
   })
 
-  const terminateSubscriptionMutation = useMutation(({customerId, productName, endDate}) => updateSubscription(customerId, productName, new Date(endDate).toISOString()), {
-    onSuccess: (data) => {
+  const terminateSubscriptionMutation = useMutation(({customerId, productName, endDate}) => updateSubscription(customerId, productName, endDate), {
+    onSuccess: (data, variables) => {
       alert("User subscription terminated successfully!")
+
+      setFormData((prev) => ({...prev, endDate: variables.endDate}))
+
+      setUserSubscriptions((prevSubscriptions) =>
+        prevSubscriptions.map((sub) =>
+          sub.ProductName === variables.productName
+            ? { ...sub, SubscriptionEndDate: variables.endDate }
+            : sub
+        )
+      );
     },
     onError: (error) => {
       alert("User termination process failed!")
@@ -129,8 +147,8 @@ function SubscriptionForm() {
   }
   
   const terminateSubscription = () => {
-    if(new Date(formData.endDate) >= new Date()) {
-      const todayDate = new Date().toUTCString()
+    const todayDate = new Date().toISOString().split('T')[0]
+    if(new Date(formData.endDate) >= new Date(todayDate)) {
       console.error("(Terminate Subscription): Today's date: ", todayDate)
       terminateSubscriptionMutation.mutate({customerId: formData.customerId, productName: formData.productName, endDate: todayDate})
     }
