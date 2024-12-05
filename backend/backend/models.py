@@ -9,7 +9,7 @@ class Customer(models.Model):
         db_table = 'CUSTOMER'
 
     def __str__(self):
-        return self.name
+        return f"Name: {self.Name}"
 
 class Product(models.Model):
     ProductName = models.CharField(max_length=50, primary_key=True, unique=True)
@@ -20,7 +20,7 @@ class Product(models.Model):
         db_table = 'PRODUCT'
 
     def __str__(self):
-        return self.name
+        return f"Name: {self.ProductName}"
 
 class Subscription(models.Model):
     SubscriptionID = models.AutoField(primary_key=True)
