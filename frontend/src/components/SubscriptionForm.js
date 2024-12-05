@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { fetchCustomers, fetchProducts, fetchCustomerSubscription, addSubscription, updateSubscription } from '../utilities/api';
+import { fetchCustomers, fetchProducts, fetchCustomerSubscription, addSubscription, updateSubscription, fetchSubscriptions } from '../utilities/api';
 
 function SubscriptionForm() {
 
@@ -14,11 +14,21 @@ function SubscriptionForm() {
   });
 
   const [prevEndDate, setPrevEndDate] = useState('');
+
   const { data: customers } = useQuery('customer', fetchCustomers);
   const { data: products } = useQuery('product', fetchProducts);
+  const { data: subscriptions } = useQuery('subscription', fetchSubscriptions)
 
   const [userSubscriptions, setUserSubscriptions] = useState([]);
   const [isEditable, setIsEditable] = useState(false) // false: Can be edited, true: Can be submitted
+  const [revenue, setRevenue] = useState(0)
+
+  useEffect(() => {
+    if (formData.customerId && formData.productName) {
+      const newRevenue = subscriptionCostCalculator(formData.customerId, formData.productName)
+      setRevenue(newRevenue)
+    }
+  }, [formData])
 
   // TOGGLERS
   const toggleEditMode = () => {    
@@ -38,6 +48,28 @@ function SubscriptionForm() {
       setPrevEndDate(formData.endDate)
     }
     setIsEditable((prev) => !prev)
+  }
+
+  // CALCULATIONS
+  const subscriptionCostCalculator = (customerId, productName) => {
+
+    const annualPrice = products.find(product => product.ProductName === productName).AnnualSubscriptionCost;
+    const subscription = subscriptions.find(sub => ((sub.ProductName === productName) && (sub.CustomerID === customerId)));
+
+    if(!subscription || !annualPrice) return 0;
+
+    const startDate = new Date(subscription.SubscriptionStartDate);
+    const endDate = (new Date(subscription.SubscriptionEndDate) <= new Date()) ? (new Date(subscription.SubscriptionEndDate)) : (new Date())
+    const users = subscription.NumberOfUsers;
+    let revenue = 0.0
+
+    if(startDate < new Date()){
+      // Calculate revenue based on subscription period (pro-rated if needed)
+      const durationInYears = (endDate - startDate) / (1000 * 60 * 60 * 24 * 365.25);
+      revenue = annualPrice * users * durationInYears;
+    }
+
+    return revenue.toFixed(2);
   }
 
   // API MUTATIONS
@@ -70,6 +102,16 @@ function SubscriptionForm() {
   const newUserMutation = useMutation((formData) => addSubscription(formData), {
     onSuccess: (data) => {
       alert("New subscription added successfully!")
+
+      mutation.mutate({ customerId: formData.customerId, productName: formData.productName });
+      setFormData({
+        customerId: data.CustomerID,
+        productName: data.ProductName,
+        startDate: data.SubscriptionStartDate,
+        endDate: data.SubscriptionEndDate,
+        users: data.NumberOfUsers,
+      });
+
     },
     onError: (error) => {
       alert("User subscription failed. Try again!")
@@ -285,6 +327,8 @@ function SubscriptionForm() {
               <li className='list-group-item'><b>Number of Users:</b> {formData.users}</li>
               <li className='list-group-item'><b>Description:</b> {products.find(product => product.ProductName === formData.productName).Description}</li>
               <li className='list-group-item'><b>Annual subscription cost:</b> ${products.find(product => product.ProductName === formData.productName).AnnualSubscriptionCost}</li>
+              <li className='h2 list-group-item'><h6>Total revenue (Till date):</h6> ${revenue}</li>
+              
             </ul>
           ) : (
             <div className='m-1'>
