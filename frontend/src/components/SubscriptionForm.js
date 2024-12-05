@@ -12,7 +12,7 @@ function SubscriptionForm() {
     productName: '',
     startDate: '',
     endDate: '',
-    users: 0
+    users: 1
   });
 
   const [prevEndDate, setPrevEndDate] = useState('');
@@ -212,136 +212,128 @@ function SubscriptionForm() {
   return (
     <div className='row align-items-stretch sub-form'>
       <div className='bg-warning col-lg-4 col-md-12 d-flex'>
-      <form className="container p-4 border rounded shadow-lg bg-white" onSubmit={checkSubscription}>
-  <h3 className="mb-4 text-center fw-bold text-primary">Subscribe for Your Favorite Products and Services!</h3>
-
-  <div className="mb-3">
-    <label htmlFor="customerId" className="form-label text-secondary fw-semibold">Customer</label>
-    <select id="customerId" name="customerId" className="form-select shadow-sm" onChange={handleChange} value={formData.customerId} required>
-      <option value="">Select Customer</option>
-      {customers?.map((customer) => (
-        <option key={customer.CustomerID} value={customer.CustomerID}>
-          {customer.Name}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <div className="mb-3">
-    <label htmlFor="productName" className="form-label text-secondary fw-semibold">Product</label>
-    <select id="productName" name="productName" className="form-select shadow-sm" onChange={handleChange} value={formData.productName} required>
-      <option value="">Select Product</option>
-      {products?.map((product) => (
-        <option key={product.ProductName} value={product.ProductName}>
-          {product.ProductName}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <div className="mb-3">
-    <label htmlFor="startDate" className="form-label text-secondary fw-semibold">Start Date</label>
-    <input
-      type="date"
-      id="startDate"
-      name="startDate"
-      onChange={handleChange}
-      value={formData.startDate}
-      className="form-control shadow-sm"
-      required
-    />
-  </div>
-
-  <div className="mb-3">
-    <label htmlFor="endDate" className="form-label text-secondary fw-semibold">End Date</label>
-    <input
-      type="date"
-      id="endDate"
-      name="endDate"
-      onChange={handleChange}
-      value={formData.endDate}
-      className="form-control shadow-sm"
-      required
-    />
-  </div>
-
-  <div className="mb-3">
-    <label htmlFor="users" className="form-label text-secondary fw-semibold">Number of Users</label>
-    <input
-      type="number"
-      id="users"
-      name="users"
-      onChange={handleChange}
-      value={formData.users}
-      className="form-control shadow-sm"
-      placeholder="Number of Users"
-      min="1" step="1"
-      required
-    />
-  </div>
-
-  <button type="submit" className="btn btn-primary w-100 shadow-sm fw-bold">Check / Register</button>
-</form>
-
+          <form className="container p-4 border rounded shadow-lg" onSubmit={checkSubscription}>
+            <h3 className="mb-4 text-center fw-bold text-primary">Subscribe for Your Favorite Products and Services!</h3>
+            <div className="mb-3">
+                <label htmlFor="customerId" className="form-label text-secondary fw-semibold">Customer</label>
+                <select id="customerId" name="customerId" className="form-select shadow-sm" onChange={handleChange} value={formData.customerId} required>
+                  <option value="">Select Customer</option>
+                  {customers?.map((customer) => (
+                  <option key={customer.CustomerID} value={customer.CustomerID}>
+                      {customer.Name}
+                  </option>
+                  ))}
+                </select>
+            </div>
+            <div className="mb-3">
+                <label htmlFor="productName" className="form-label text-secondary fw-semibold">Product</label>
+                <select id="productName" name="productName" className="form-select shadow-sm" onChange={handleChange} value={formData.productName} required>
+                  <option value="">Select Product</option>
+                  {products?.map((product) => (
+                  <option key={product.ProductName} value={product.ProductName}>
+                      {product.ProductName}
+                  </option>
+                  ))}
+                </select>
+            </div>
+            <div className="mb-3">
+                <label htmlFor="startDate" className="form-label text-secondary fw-semibold">Start Date</label>
+                <input
+                  type="date"
+                  id="startDate"
+                  name="startDate"
+                  onChange={handleChange}
+                  value={formData.startDate}
+                  className="form-control shadow-sm"
+                  required
+                  />
+            </div>
+            <div className="mb-3">
+                <label htmlFor="endDate" className="form-label text-secondary fw-semibold">End Date</label>
+                <input
+                  type="date"
+                  id="endDate"
+                  name="endDate"
+                  onChange={handleChange}
+                  value={formData.endDate}
+                  className="form-control shadow-sm"
+                  required
+                  />
+            </div>
+            <div className="mb-3">
+                <label htmlFor="users" className="form-label text-secondary fw-semibold">Number of Users</label>
+                <input
+                  type="number"
+                  id="users"
+                  name="users"
+                  onChange={handleChange}
+                  value={formData.users}
+                  className="form-control shadow-sm"
+                  placeholder="Number of Users"
+                  min="1" step="1"
+                  required
+                  />
+            </div>
+            <button type="submit" className="btn btn-success w-100 shadow-sm fw-bold">Check / Register</button>
+          </form>
       </div>
-
       <div className="col-lg col-md-12 p-4 d-flex bg-gradient flex-column shadow-lg rounded">
-  <div id="user-info-div" className="row p-3 bg-light rounded shadow-sm">
-    <h3 className="text-center text-primary fw-bold mb-3">Subscriber & Subscription Information</h3>
-    <div id="user-info-panel" className="border-top my-3"></div>
-
-    {userSubscriptions.length > 0 ? (
-      <ul className="list-group p-2">
-        <li className="list-group-item"><b>Subscription ID:</b> {userSubscriptions[0].SubscriptionID}</li>
-        <li className="list-group-item"><b>Customer ID:</b> {formData.customerId}</li>
-        <li className="list-group-item"><b>Product:</b> {formData.productName}</li>
-        <li className="list-group-item"><b>Start date:</b> {new Date(formData.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</li>
-        <li className="list-group-item d-flex justify-content-between align-items-center">
-          {isEditable ? (
-            <>
-              <span className="d-flex align-items-center m-0">
-                <label htmlFor="endDate" className="form-label m-0 me-2"><b>End Date:</b></label>
-                <input type="date" id="endDate" name="endDate" onChange={handleChange} defaultValue={formData.endDate} className="form-control form-control-sm shadow-sm" required />
-              </span>
-              <button type="button" onClick={toggleEditMode} className="btn btn-link text-decoration-none p-0 m-0 fw-bold text-success">
-                <i className="bi bi-floppy"></i> Save
-              </button>
-            </>
-          ) : (
-            <>
-              <span className="m-0"><b>End date:</b> {new Date(formData.endDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
-              <button type="button" onClick={toggleEditMode} className="btn btn-link text-decoration-none p-0 m-0 fw-bold text-primary">
-                <i className="bi bi-pencil-square"></i> Edit
-              </button>
-            </>
-          )}
-        </li>
-        <li className="list-group-item"><b>Number of Users:</b> {formData.users}</li>
-        <li className="list-group-item"><b>Description:</b> {products.find(product => product.ProductName === formData.productName).Description}</li>
-        <li className="list-group-item"><b>Annual subscription cost:</b> ${products.find(product => product.ProductName === formData.productName).AnnualSubscriptionCost}</li>
-        <li className="list-group-item h2"><h6>Total revenue (Till date):</h6> ${revenue}</li>
-      </ul>
-    ) : (
-      <div className="alert alert-info p-3">
-        <p className="text-start m-0">
-          No subscriptions found for the selected customer and product. Do you want to register a
-          <a href="/" onClick={newSubscription} className="text-success text-decoration-none fw-bold"> new entry?</a>
-        </p>
+          <div id="user-info-div" className="row p-3 bg-light rounded shadow-sm">
+            <h3 className="text-center text-primary fw-bold mb-3">Subscriber & Subscription Information</h3>
+            <div id="user-info-panel" className="border-top my-3"></div>
+            {userSubscriptions.length > 0 ? (
+            <ul className="list-group p-2">
+                <li className="list-group-item"><b>Subscription ID:</b> {userSubscriptions[0].SubscriptionID}</li>
+                <li className="list-group-item"><b>Customer ID:</b> {formData.customerId}</li>
+                <li className="list-group-item"><b>Product:</b> {formData.productName}</li>
+                <li className="list-group-item"><b>Start date:</b> {new Date(formData.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</li>
+                <li className="list-group-item d-flex justify-content-between align-items-center">
+                  {isEditable ? (
+                  <>
+                  <span className="d-flex align-items-center m-0">
+                  <label htmlFor="endDate" className="form-label m-0 me-2"><b>End Date:</b></label>
+                  <input type="date" id="endDate" name="endDate" onChange={handleChange} defaultValue={formData.endDate} className="form-control form-control-sm shadow-sm" required />
+                  </span>
+                  <button type="button" onClick={toggleEditMode} className="btn btn-link text-decoration-none p-0 m-0 fw-bold text-success">
+                  <i className="bi bi-floppy"></i> Save
+                  </button>
+                  </>
+                  ) : (
+                  <>
+                  <span className="m-0"><b>End date:</b> {new Date(formData.endDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+                  <button type="button" onClick={toggleEditMode} className="btn btn-link text-decoration-none p-0 m-0 fw-bold text-primary">
+                  <i className="bi bi-pencil-square"></i> Edit
+                  </button>
+                  </>
+                  )}
+                </li>
+                <li className="list-group-item"><b>Number of Users:</b> {formData.users}</li>
+                <li className="list-group-item"><b>Description:</b> {products.find(product => product.ProductName === formData.productName).Description}</li>
+                <li className="list-group-item"><b>Annual subscription cost:</b> ${products.find(product => product.ProductName === formData.productName).AnnualSubscriptionCost}</li>
+                <li className="list-group-item h2">
+                  <h6>Total revenue (Till date):</h6>
+                  ${revenue}
+                </li>
+            </ul>
+            ) : (
+            <div className="alert alert-info p-3">
+                <p className="text-start m-0">
+                  No subscriptions found for the selected customer and product. Do you want to register a
+                  <a href="/" onClick={newSubscription} className="text-success text-decoration-none fw-bold"> new entry?</a>
+                </p>
+            </div>
+            )}
+          </div>
+          {userSubscriptions.length > 0 ? (
+          <div className="row mt-4">
+            <div className="d-flex justify-content-center">
+                <button type="button" onClick={terminateSubscription} className="btn btn-danger shadow-sm fw-bold">
+                Terminate Subscription
+                </button>
+            </div>
+          </div>
+          ) : null}
       </div>
-    )}
-  </div>
-
-  {userSubscriptions.length > 0 ? (
-    <div className="row mt-4">
-      <div className="d-flex justify-content-center">
-        <button type="button" onClick={terminateSubscription} className="btn btn-danger shadow-sm fw-bold">
-          Terminate Subscription
-        </button>
-      </div>
-    </div>
-  ) : null}
-</div>
-
     </div>
   )
 }

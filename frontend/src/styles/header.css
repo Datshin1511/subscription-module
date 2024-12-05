@@ -7,3 +7,31 @@
     margin: 0em;
     height: 10vh;
 }
+
+.header-container {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border-bottom: 3px solid #003d82;
+    padding: 1rem;
+    text-align: start;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-container p {
+    color: #ffffff;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 1px;
+  }
+  
+  .shadow-sm {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+  
+  @media (max-width: 768px) {
+    .header-container p {
+      font-size: 1.5rem;
+    }
+  }
+  
